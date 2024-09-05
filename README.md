@@ -52,3 +52,56 @@ The project aims to assess the Academy Virtual Machine (VM), configure a Securit
 ### Conclusion:
 This project involves a comprehensive approach to cybersecurity by configuring SIEM, scanning, exploiting vulnerabilities, and escalating privileges to retrieve critical information.
 
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+
+### Vulnerability Assessment and Penetration Testing (VAPT)
+
+**Objective:**
+The objective of this project is to conduct a vulnerability assessment and penetration testing on a target system, specifically identifying security weaknesses and exploiting them to gain root access.
+
+### Process:
+
+1. **Scanning:**
+   - **Nmap Scan:** 
+     The initial step is scanning the target system using Nmap to identify open ports and services. Command:
+     ```
+     sudo nmap -p- -sC -sV -A -v <target_ip> --min-rate=1000
+     ```
+     Result: The target system has three open ports: FTP (21) and HTTP (80).
+
+2. **Password Cracking:**
+   - **Hydra Attack:**
+     Using Hydra and a password list (`rockyou.txt`), the password for the FTP service was successfully cracked.
+     ```
+     hydra -l jenny -P rockyou.txt <target_ip> ftp
+     ```
+     Result: FTP password retrieved as "987654321".
+
+3. **FTP Access:**
+   - **File Upload:**
+     Logged into the FTP service using the cracked credentials. A reverse shell PHP file was uploaded to gain remote access. The PHP file was downloaded from GitHub and modified to include the attacker's IP and port.
+
+4. **Reverse Shell:**
+   - **Execution:**
+     After uploading the reverse shell file to the target system, it was executed via the browser or terminal to establish a connection back to the attacker's machine.
+     ```
+     nc -nvlp <portno.>
+     ```
+     Result: Gained access with user privileges (www-data).
+
+5. **Privilege Escalation:**
+   - **Sudo Privileges:**
+     Using Python, the shell was upgraded to allow sudo commands.
+     ```
+     python3 -c 'import pty;pty.spawn("/bin/bash")'
+     ```
+     Switched user to "jenny" and then to root using `sudo su`.
+
+6. **Flag Extraction:**
+   - **Finding the Flag:**
+     Located the flag file in the system and extracted its contents using the `cat` command.
+
+### Result:
+The penetration test revealed critical vulnerabilities in the system, allowing an attacker to escalate privileges and gain full control as the root user. This presents a significant risk to the system and compromises sensitive user information.
